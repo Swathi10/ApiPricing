@@ -40,6 +40,10 @@ object MySqlClient {
     val statement = getConnection.createStatement()
     statement.executeQuery(query)
   }
+  def executeUpdate(query: String): Int = {
+    val statement = getConnection.createStatement()
+    statement.executeUpdate(query)
+  }
 
   def insert(tableName: String, elements: Map[String, Any]): Int = {
     try {

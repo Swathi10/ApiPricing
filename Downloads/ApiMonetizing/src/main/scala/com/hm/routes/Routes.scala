@@ -3,10 +3,11 @@ package com.hm.routes
 import spray.http.MediaTypes.`text/html`
 import spray.routing.HttpService
 
+
 /**
   * Created by swathi on 24/2/17.
   */
-trait Routes extends HttpService
+trait Routes extends HttpService with AuthenticationHandler
   with CountHandler {
 
 
@@ -31,6 +32,16 @@ trait Routes extends HttpService
       countByProductLine
     }~ path("countCustomer") {
       countByCustomer
+    }~path("login")
+    {
+      login
+    }~path("logout")
+    {
+      logout
+    }~path("signup")
+    {
+      signup
+
     }
 
 }
