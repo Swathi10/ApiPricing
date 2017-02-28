@@ -72,9 +72,11 @@ trait CountHandler extends HttpService with AuthenticationHandler {
     //    val t0 = System.nanoTime()
 
     val rs = MySqlClient.getResultSet("select count(ProductCode) as total from products where ProductLine ='" + prodLine + "'")
-    val query = "update pricing set papivisits=papivisits+1 where name = '" + username + "'"
+   updatevisits(username)
+
+   // val query =
     //    println(query)
-    val rs1 = MySqlClient.executeUpdate(query)
+   // val rs1 = MySqlClient.executeUpdate(query)
     //    val t1 = System.nanoTime()
     //    println(t1 - t0)
     var value = 0
@@ -95,9 +97,10 @@ trait CountHandler extends HttpService with AuthenticationHandler {
     //    var mb = 1024*1024;
     //    val t0 = System.currentTimeMillis()
     val rs = MySqlClient.getResultSet("select count(productCode) as total from orderdetails where orderNumber in (select orderNumber from orders where customerNumber= " + prodLine + " AND status = 'Shipped')")
-    val query = "update pricing set capivisits=capivisits+1 where name = '" + username + "'"
+
+    updatevisits(username)//val query = "update pricing set capivisits=capivisits+1 where name = '" + username + "'"
     //    println(query)
-      val rs1 = MySqlClient.executeUpdate(query)
+     // val rs1 = MySqlClient.executeUpdate(query)
     //    val t1 = System.currentTimeMillis()
     //println(t1-t0)
     //    var status = false
@@ -112,5 +115,16 @@ trait CountHandler extends HttpService with AuthenticationHandler {
     value
   }
 
+  def updatevisits(username: String):Boolean={
 
+
+    MySqlClient.statement.setString(1,username)
+
+    MySqlClient.statement1.setString(1,username)
+    MySqlClient.statement.addBatch()
+    MySqlClient.statement1.addBatch()
+
+
+    true
+  }
 }

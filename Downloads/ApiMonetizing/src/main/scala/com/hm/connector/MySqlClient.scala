@@ -7,6 +7,8 @@ package com.hm.connector
 
 import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet}
 
+import akka.actor.ActorSystem
+
 import scala.collection.mutable.ArrayBuffer
 
 object MySqlClient {
@@ -29,7 +31,10 @@ object MySqlClient {
 
   def closeConnection() = conn.close()
 
-  def executeQuery(query: String): Boolean = {
+  val statement=MySqlClient.getConnection.prepareStatement(" update pricing set papivisits=papivisits+1 where name = (?)")
+
+  val statement1=MySqlClient.getConnection.prepareStatement(" update pricing set capivisits=capivisits+1 where name = (?)")
+    def executeQuery(query: String): Boolean = {
     val statement = getConnection.createStatement()
     try
       statement.execute(query)
@@ -93,5 +98,16 @@ object MySqlClient {
     }
   }
 
+  import system.dispatcher
+  import scala.concurrent.duration._
+  // ...now with system in current scope:
+  val system=ActorSystem("on-spray-can")
+  system.scheduler.schedule(10 seconds, 10 seconds) {
+    MySqlClient.statement.executeBatch()
+    MySqlClient.statement1.executeBatch()
+    MySqlClient.getConnection.commit()
+  }
 
 }
+
+
