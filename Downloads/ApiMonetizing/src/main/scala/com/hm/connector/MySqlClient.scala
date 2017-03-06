@@ -8,6 +8,7 @@ package com.hm.connector
 import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet}
 
 import akka.actor.ActorSystem
+import com.hm.routes.CountHandler
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -31,9 +32,11 @@ object MySqlClient {
 
   def closeConnection() = conn.close()
 
-  val statement=MySqlClient.getConnection.prepareStatement(" update pricing set papivisits=papivisits+1 where name = (?)")
-
-  val statement1=MySqlClient.getConnection.prepareStatement(" update pricing set capivisits=capivisits+1 where name = (?)")
+// val statement=MySqlClient.getConnection.prepareStatement(" update pricing set papivisits=papivisits+(?) where name = (?)")
+//
+//  val statement1=MySqlClient.getConnection.prepareStatement(" update pricing set capivisits=capivisits+(?) where name = (?)")
+  val statement2=MySqlClient.getConnection.prepareStatement("insert into user(name,user_name,password) values (?,?,?)")
+  val statement3=MySqlClient.getConnection.prepareStatement("insert into pricing(name,capivisits,papivisits) values (?,0,0)")
     def executeQuery(query: String): Boolean = {
     val statement = getConnection.createStatement()
     try
@@ -102,10 +105,43 @@ object MySqlClient {
   import scala.concurrent.duration._
   // ...now with system in current scope:
   val system=ActorSystem("on-spray-can")
-  system.scheduler.schedule(10 seconds, 10 seconds) {
-    MySqlClient.statement.executeBatch()
-    MySqlClient.statement1.executeBatch()
-    MySqlClient.getConnection.commit()
+  system.scheduler.schedule(11 seconds, 11 seconds) {
+
+CountHandler.counterMap.foreach(i=>{
+  println("User "+i._1+" Count "+i._2)
+  if(i._2!=0) {
+    val rs = MySqlClient.getResultSet("select * from pricing where name='" + i._1 + "'")
+    if (rs.next()) {
+      val query = MySqlClient.executeQuery(" update pricing set papivisits=papivisits+" + i._2 + " where name ='" + i._1 + "'")
+    }
+    else {
+      MySqlClient.executeQuery("insert into pricing values('" + i._1 + "',0," + i._2 + ")")
+
+    }
+    rs.close()
+    CountHandler.counterMap.put(i._1, 0)
+  }
+})
+
+
+
+
+    CountHandler.counterMap1.foreach(i=>{
+      if(i._2!=0) {
+        val rs = MySqlClient.getResultSet("select * from pricing where name='" + i._1 + "'")
+        if (rs.next()) {
+          val query = MySqlClient.executeQuery(" update pricing set  capivisits=capivisits+" + i._2 + " where name ='" + i._1 + "'")
+        }
+        else {
+          MySqlClient.executeQuery("insert into pricing values('" + i._1 + "'," + i._2 + ",0)")
+        }
+        rs.close()
+        CountHandler.counterMap1.put(i._1, 0)
+      }
+    })
+
+
+
   }
 
 }

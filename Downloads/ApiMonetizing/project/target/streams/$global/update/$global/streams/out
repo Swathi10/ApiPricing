@@ -6074,7 +6074,7 @@
 [debug] 	[NOT REQUIRED] org.scala-sbt#template-resolver;0.1!template-resolver.jar
 [debug] 	[NOT REQUIRED] org.scala-lang#jline;2.10.6!jline.jar
 [debug] 	[NOT REQUIRED] org.fusesource.jansi#jansi;1.4!jansi.jar
-[debug] :: resolution report :: resolve 778ms :: artifacts dl 12ms
+[debug] :: resolution report :: resolve 1310ms :: artifacts dl 50ms
 [debug] 	report for default#apimonetizing-build;0.1-SNAPSHOT compile produced in /home/swathi/Downloads/ApiMonetizing/project/target/resolution-cache/reports/default-apimonetizing-build-compile.xml
 [debug] 	report for default#apimonetizing-build;0.1-SNAPSHOT runtime produced in /home/swathi/Downloads/ApiMonetizing/project/target/resolution-cache/reports/default-apimonetizing-build-runtime.xml
 [debug] 	report for default#apimonetizing-build;0.1-SNAPSHOT test produced in /home/swathi/Downloads/ApiMonetizing/project/target/resolution-cache/reports/default-apimonetizing-build-test.xml
@@ -6088,5 +6088,5 @@
 [debug] 	report for default#apimonetizing-build;0.1-SNAPSHOT docs produced in /home/swathi/Downloads/ApiMonetizing/project/target/resolution-cache/reports/default-apimonetizing-build-docs.xml
 [debug] 	report for default#apimonetizing-build;0.1-SNAPSHOT pom produced in /home/swathi/Downloads/ApiMonetizing/project/target/resolution-cache/reports/default-apimonetizing-build-pom.xml
 [debug] 	report for default#apimonetizing-build;0.1-SNAPSHOT scala-tool produced in /home/swathi/Downloads/ApiMonetizing/project/target/resolution-cache/reports/default-apimonetizing-build-scala-tool.xml
-[debug] 	resolve done (778ms resolve - 12ms download)
+[debug] 	resolve done (1310ms resolve - 50ms download)
 [info] Done updating.

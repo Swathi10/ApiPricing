@@ -6,6 +6,7 @@ import spray.json.JsString
 import spray.json._
 import spray.routing.HttpService
 
+
 /**
   * Created by vishnu on 2/17/17.
   */
@@ -51,7 +52,7 @@ trait AuthenticationHandler extends HttpService{
         val name=json.getFields("name").head.asInstanceOf[JsString].value
         val userName=json.getFields("userName").head.asInstanceOf[JsString].value
         val password=json.getFields("password").head.asInstanceOf[JsString].value
-        if(!registerUser(name,userName,password)) {
+        if(registerUser(name,userName,password)) {
 
           complete("signup successful")
         }
@@ -78,11 +79,10 @@ trait AuthenticationHandler extends HttpService{
     rs.close()
     response
   }
-  def registerUser(name:String,userName:String,password:String)={
-    val rs=MySqlClient.executeQuery("insert into user(name,user_name,password) values ('"+name+"','"+userName+"','"+password+"')")
-    val rs1=MySqlClient.executeQuery("insert into pricing(name,capivisits,papivisits) values ('"+userName+"',0,0)")
+  def registerUser(name:String,userName:String,password:String):Boolean={
 
-    rs
+    val statement2=MySqlClient.executeQuery("insert into user(name,user_name,password) values ('"+name+"','"+userName+"','"+password+"')")
+    true
   }
 
 
