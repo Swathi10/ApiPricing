@@ -37,6 +37,9 @@ object MySqlClient {
 //  val statement1=MySqlClient.getConnection.prepareStatement(" update pricing set capivisits=capivisits+(?) where name = (?)")
   val statement2=MySqlClient.getConnection.prepareStatement("insert into user(name,user_name,password) values (?,?,?)")
   val statement3=MySqlClient.getConnection.prepareStatement("insert into pricing(name,capivisits,papivisits) values (?,0,0)")
+
+
+
     def executeQuery(query: String): Boolean = {
     val statement = getConnection.createStatement()
     try
@@ -107,21 +110,43 @@ object MySqlClient {
   val system=ActorSystem("on-spray-can")
   system.scheduler.schedule(11 seconds, 11 seconds) {
 
-CountHandler.counterMap.foreach(i=>{
-  println("User "+i._1+" Count "+i._2)
-  if(i._2!=0) {
-    val rs = MySqlClient.getResultSet("select * from pricing where name='" + i._1 + "'")
-    if (rs.next()) {
-      val query = MySqlClient.executeQuery(" update pricing set papivisits=papivisits+" + i._2 + " where name ='" + i._1 + "'")
-    }
-    else {
-      MySqlClient.executeQuery("insert into pricing values('" + i._1 + "',0," + i._2 + ")")
+    CountHandler.timeMap.foreach(i=>{
+      val rs= MySqlClient.getResultSet("select * from pricing_2 where time1='"+i._1+"'")
+      if(!rs.next){
+
+        MySqlClient.executeQuery("insert into pricing_2 (time1,papivisits,capivisits) values('"+i._1+"',0,0)")
+      }
+        CountHandler.counterMap.foreach(j=>{
+          val rs1= MySqlClient.getResultSet("select * from pricing_2 where time1='"+i._1+"' and name='"+j._1+"'")
+          if(rs1.next())
+            {
+              MySqlClient.executeUpdate("Update pricing_2 set papivisits=papivisits+"+j._2+" where name='"+j._1+"' and time1='"+i._1+ "'")
+            }
+          else
+            {
+              MySqlClient.executeQuery("insert into pricing_2 values('"+i._1+"','"+j._1+"',"+j._2+",0)")
+            }
+
+        })
+      })
 
     }
-    rs.close()
-    CountHandler.counterMap.put(i._1, 0)
-  }
-})
+
+//CountHandler.counterMap.foreach(i=>{
+//  println("User "+i._1+" Count "+i._2)
+//  if(i._2!=0) {
+//    val rs = MySqlClient.getResultSet("select * from pricing_2 where name='" + i._1 + "'")
+//    if (rs.next()) {
+//      val query = MySqlClient.executeQuery(" update pricing set papivisits=papivisits+" + i._2 + " where name ='" + i._1 + "'")
+//    }
+//    else {
+//      MySqlClient.executeQuery("insert into pricing values('" + i._1 + "',0," + i._2 + ")")
+//
+//    }
+//    rs.close()
+//    CountHandler.counterMap.put(i._1, 0)
+//  }
+//})
 
 
 
@@ -142,7 +167,7 @@ CountHandler.counterMap.foreach(i=>{
 
 
 
-  }
+
 
 }
 
